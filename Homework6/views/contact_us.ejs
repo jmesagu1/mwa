@@ -11,7 +11,7 @@
 <body>
 
 
-    <form method="POST" enctype="x-www-form-urlencoded">
+  <form method="POST" enctype="x-www-form-urlencoded">
 
         <h1>
             <%= title %>
@@ -43,7 +43,7 @@
             <textarea id="message" name="message"><% if(locals.message){ %><%= message %><% } %></textarea>
         </fieldset>
         <button type="submit">Sign Up</button>
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
     </form>
 </body>
 

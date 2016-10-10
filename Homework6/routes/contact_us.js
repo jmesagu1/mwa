@@ -4,13 +4,14 @@ var util = require('util');
 var fs = require('fs');
 
 /* GET contact_us page. */
-router.get('/', function(req, res, next) {
+router.get('/contactus', function(req, res, next) {
   res.render('contact_us', { title: 'Contact Us'});
 });
 
-router.post('/', function(req, res, next) {
-    req.checkBody('name', 'Invalid name').notEmpty().isAlpha();
-    req.checkBody('type', 'Invalid message type').notEmpty().belongsToList(["suggestion", "complaint"]);
+router.post('/contactus', function(req, res, next) {
+
+    req.checkBody('name', 'Invalid name').notEmpty();
+    req.checkBody('type', 'Invalid message type').notEmpty().is(["suggestion", "complaint"]);
     req.checkBody('message', 'Invalid message').notEmpty();
 
     var errors = req.validationErrors();
@@ -21,6 +22,7 @@ router.post('/', function(req, res, next) {
         res.locals.type = req.body.type;
 
         var errorsByKey = [];
+
         errors.map(function(e){
             if(!errorsByKey[e.param]) {
                 errorsByKey[e.param] = [];
@@ -28,6 +30,7 @@ router.post('/', function(req, res, next) {
             errorsByKey[e.param] = e;
         });
         console.log("errorsByKey: ");
+
         console.log(errorsByKey);
 
         res.render('contact_us', { title: 'Contact Us', errorsByKey: errorsByKey});

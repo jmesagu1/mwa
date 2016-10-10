@@ -4,45 +4,48 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var helmet = require('helmet');
 var session = require('express-session');
 var uuid = require('uuid');
 var csrf = require('csurf');
-var expressValidator = require('express-validator');
-
-
-
-var routes = require('./routes/index');
-var users = require('./routes/users');
+var validator = require('express-validator');
 var contact_us = require('./routes/contact_us');
 
 var app = express();
+
+app.use(helmet());
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 // uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(expressValidator({
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(validator({
  customValidators: {
-    belongsToList: function(val, param) {
-        var i = param.length;
-        while (i--) {
-          if (param[i] === val) {
-              return true;
-          }
-        }
-        return false;
-      }
+    is: function(value,params) {
+      return params.includes(value);
+    }
  }
-}));
-app.use(cookieParser());
+}
 
+));
+
+
+
+app.use(require('less-middleware')(path.join(__dirname, 'public')));
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+
+app.use(cookieParser());
 app.use(session({
-  secret: 'yi4YrUYFDd',
+  secret: 'MySecret',
   resave: true,
   saveUninitialized: false,
   cookie: { maxAge: 60000 },
@@ -52,18 +55,13 @@ app.use(session({
 }));
 
 app.use(csrf());
+
 app.use((req, res, next) => {
   res.locals.csrfToken = req.csrfToken();
   next();
 });
 
-
-app.use(require('less-middleware')(path.join(__dirname, 'public')));
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.use('/', routes);
-app.use('/users', users);
-app.use(['/contact_us', '/contactus'], contact_us);
+app.use('/', contact_us);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

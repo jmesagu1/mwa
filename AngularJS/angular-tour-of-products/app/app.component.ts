@@ -1,36 +1,20 @@
+/**
+ * Created by 985178 on 10/21/2016.
+ */
+
 import { Component } from '@angular/core';
-import {Product} from "./product";
-import {ProductService} from "./product.service";
-import { OnInit } from '@angular/core';
 @Component({
     selector: 'my-app',
     template: `
-    <h1>{{title}}</h1>
-    <h2>My products</h2>
-        <ul class="product">
-          <li [class.selected]="product === selectedProduct"  *ngFor="let product of products" (click)="onSelect(product)">
-            <span class="badge">{{product.id}}</span> {{product.name}}
-          </li>
-        </ul>
-       <my-product-detail [product]="selectedProduct"></my-product-detail>
-    `
+        <h1>{{title}}</h1>
+      <nav>
+        <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+        <a routerLink="/products" routerLinkActive="active">Products</a>
+      </nav>
+      <router-outlet></router-outlet>
+  `,
+    styleUrls: ['app/app.component.css']
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
     title = 'Tour of Products';
-    products : Product[];
-    selectedProduct: Product;
-
-    constructor(private productService: ProductService) {}
-
-    ngOnInit(): void {
-        this.getHeroes();
-    }
-
-    getHeroes(): void {
-        this.productService.getProducts().then(products => this.products = products);
-    }
-
-    onSelect(product: Product): void {
-        this.selectedProduct = product;
-    }
 }
